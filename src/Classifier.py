@@ -11,13 +11,10 @@ from utils import read_json_as_dict
 from config import paths
 from schema.data_schema import ClassificationSchema
 from sklearn.model_selection import train_test_split
-
-
-warnings.filterwarnings("ignore")
-PREDICTOR_FILE_NAME = "predictor.joblib"
+from preprocessing.preprocess import encode_target
 
 from sklearn.svm import LinearSVC, SVC, NuSVC
-from sklearn.linear_model import(
+from sklearn.linear_model import (
     SGDClassifier, 
     Perceptron, 
     LogisticRegression, 
@@ -44,6 +41,8 @@ from sklearn.tree import DecisionTreeClassifier, ExtraTreeClassifier
 from sklearn.naive_bayes import BernoulliNB, GaussianNB
 from sklearn.dummy import DummyClassifier
 
+warnings.filterwarnings("ignore")
+PREDICTOR_FILE_NAME = "predictor.joblib"
 
 classifiers = [
     LinearSVC, 
@@ -77,7 +76,9 @@ classifiers = [
     DummyClassifier,
 ]
 
+
 def clean_and_ensure_unique(names: List[str]) -> List[str]:
+
     """
     Clean the provided column names by removing special characters and ensure their
     uniqueness.
@@ -132,7 +133,7 @@ class Classifier:
         self.train_input = train_input
         self.schema = schema
         self.x = train_input.drop(columns=[schema.target])
-        self.y = train_input[schema.target]
+        self.y, self.target_encoder = encode_target(train_input[schema.target], save_path=result_path)
         self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(self.x, self.y, test_size=0.1)
         self.model_name = "lazy_predict_regressor"
         self.predictor = LazyClassifier(
@@ -141,12 +142,10 @@ class Classifier:
             custom_metric=None, 
             classifiers=[classifier for classifier in classifiers if classifier.__name__ in self.model_config["classifier"]]
             )
-        self.best_model: str = None
-
+        self.best_model: str = ''
 
     def __str__(self):
         return f"Model name: {self.model_name}"
-    
 
     def train(self) -> None:
         """Train the model on the provided data"""

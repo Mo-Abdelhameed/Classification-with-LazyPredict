@@ -9,7 +9,8 @@ import pandas as pd
 from config import paths
 from data_models.data_validator import validate_data
 from logger import get_logger, log_error
-from Classifier import load_predictor_model
+from Classifier import load_predictor_model, predict_with_model
+from preprocessing.pipeline import run_pipeline
 from schema.data_schema import load_saved_schema
 from utils import read_json_as_dict
 
@@ -94,20 +95,16 @@ async def transform_req_data_and_make_predictions(
     logger.info("Transforming data...")
     ids = data[model_resources.data_schema.id]
     data = data.drop(columns=model_resources.data_schema.id)
+    data = run_pipeline(data, model_resources.data_schema, training=False)
 
     logger.info("Making predictions...")
-    predictions_df = model_resources.predictor_model.predictor.predict_all(data)
-
-    predictions_df.drop(columns="label", inplace=True)
-    columns = predictions_df.columns
-    new_columns = []
-    for i in columns:
-        if i.__contains__("prediction_"):
-            new_columns.append(i.strip("prediction_"))
-        else:
-            new_columns.append(i)
-
-    predictions_df.columns = new_columns
+    predictions_df = predict_with_model(
+        model_resources.predictor_model,
+        data,
+        return_proba=True
+    )
+    target_encoder = model_resources.predictor_model.target_encoder
+    predictions_df = pd.DataFrame(predictions_df, columns=target_encoder.classes_)
     predictions_df[model_resources.data_schema.id] = ids
 
     logger.info("Converting predictions dataframe into response dictionary...")

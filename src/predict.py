@@ -41,7 +41,7 @@ def run_batch_predictions(
 
     predictions_df = predict_with_model(model, x_test, return_proba=True)
 
-    target_encoder = load(paths.TARGET_ENCODER_FILE)
+    target_encoder = model.target_encoder
     class_names = target_encoder.classes_
 
     predictions_df = pd.DataFrame(predictions_df, columns=class_names)

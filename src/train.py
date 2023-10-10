@@ -6,7 +6,6 @@ from Classifier import Classifier
 from schema.data_schema import load_json_data_schema, save_schema
 from utils import read_csv_in_directory, set_seeds
 from preprocessing.pipeline import run_pipeline
-from preprocessing.preprocess import encode_target
 
 logger = get_logger(task_name="train")
 
@@ -48,8 +47,7 @@ def run_training(
             x_train[column] = x_train[column].astype(str)
 
         x_train = run_pipeline(x_train, data_schema, training=True)
-        encoded_target = encode_target(target)
-        x_train[data_schema.target] = encoded_target
+        x_train[data_schema.target] = target
         
         classifier = Classifier(x_train, data_schema, result_path=result_path)
         classifier.train()

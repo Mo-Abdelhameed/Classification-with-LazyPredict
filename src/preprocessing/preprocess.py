@@ -148,7 +148,7 @@ def normalize(
 
 
 
-def encode_target(target: pd.Series, save_path: str = paths.TARGET_ENCODER_FILE) -> pd.Series:
+def encode_target(target: pd.Series, save_path: str = paths.TARGET_ENCODER_FILE) -> Tuple[pd.Series, LabelEncoder]:
 
     """
     Performs label encoding for the target classes and saves the encoder to the provided path.
@@ -158,10 +158,10 @@ def encode_target(target: pd.Series, save_path: str = paths.TARGET_ENCODER_FILE)
         save_path (str) Directory to save the encoder.
 
     Returns:
-        pd.Series: The encoded targets.
+        Tuple[pd.Series, LabelEncoder]: The encoded targets and the used encoder.
     """
 
     encoder = LabelEncoder()
     results = encoder.fit_transform(target)
     dump(encoder, save_path)
-    return results
+    return results, encoder
