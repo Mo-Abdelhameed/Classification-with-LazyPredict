@@ -1,4 +1,4 @@
-# Classification-with-mljar-supervised
+# Classification with LazyPredict
 
 ## Project Description
 
@@ -15,7 +15,7 @@ The following are the requirements for using your data with this model:
 
 Here are the highlights of this implementation: <br/>
 
-- A flexible preprocessing pipeline built using **mljar-supervised**. Transformations include missing value imputation, categorical encoding and feature scaling. <br/>
+- A flexible preprocessing pipeline built using **Pandas** and **feature-engine**. Transformations include missing value imputation, categorical encoding and feature scaling. <br/>
 - **FASTAPI** inference service for online inferences.
   Additionally, the implementation contains the following features:
 - **Data Validation**: Pydantic data validation is used for the schema, training and test files, as well as the inference request data.
@@ -55,7 +55,6 @@ The following is the directory structure of the project:
 - **`entry_point.sh`**: This file is used as the entry point for the Docker container. It is used to run the application. When the container is run using one of the commands `train`, `predict` or `serve`, this script runs the corresponding script in the `src` folder to execute the task.
 - **`LICENSE`**: This file contains the license for the project.
 - **`README.md`**: This file (this particular document) contains the documentation for the project, explaining how to set it up and use it.
-
 
 ## Usage
 
@@ -128,82 +127,86 @@ The key `instances` contains a list of objects, each of which is a sample for wh
 {
   "status": "success",
   "message": "",
-  "timestamp": "2023-09-07T17:14:17.387476",
-  "requestId": "488fc58e97",
-  "targetDescription": "Target variable",
+  "timestamp": "<timestamp>",
+  "requestId": "<uniquely generated id>",
+  "targetClasses": ["0", "1"],
+  "targetDescription": "A binary variable indicating whether or not the passenger survived (0 = No, 1 = Yes).",
   "predictions": [
     {
-      "sampleId": "C14AN3",
-      "prediction": 101.68118
+      "sampleId": "879",
+      "predictedClass": "0",
+      "predictedProbabilities": [0.97548, 0.02452]
     }
   ]
 }
 ```
 
 ### Configuration File
+
 This configuration file is used to specify hyperparameters and settings for the model training process.
 
 ```json
 {
   "seed_value": 123,
   "prediction_field_name": "prediction",
-  "total_time_limit": 180,
-  "train_ensemble": false,
-  "stack_models": false,
-  "eval_metric": "f1",
-  "algorithms": [
-    "Linear",
-    "Random Forest",
-    "Extra Trees",
-    "LightGBM",
-    "Xgboost",
-    "Nearest Neighbors"
+  "classifier": [
+    "RandomForestClassifier",
+    "LogisticRegression",
+    "GradientBoostingClassifier",
+    "AdaBoostClassifier",
+    "MLPClassifier"
   ]
-
 }
 ```
 
+### `seed_value`
 
-Fields:
-- seed_value:
-An integer that sets the seed for randomness, ensuring reproducibility across different runs.
-- prediction_field_name:
-A string specifying the name of the field where predictions will be stored.
-- total_time_limit:
-An integer representing the total time limit for AutoML training in seconds. If unspecified, it defaults to training until all configurations are evaluated.
-- train_ensemble:
-A boolean indicating whether or not to train an ensemble of all models. By default, this is set to true, as an ensemble typically boosts performance by combining predictions from individual models.
-- stack_models:
-A boolean that determines whether to use model stacking. This is a technique where a secondary model (or meta-model) is trained on the predictions of individual models to potentially improve overall performance. By default, it's set to true.
-- eval_metric:
-A string that denotes the evaluation metric used for model training and optimization.
-- algorithms:
-A list of strings specifying the machine learning algorithms to be used in the AutoML process. The provided configuration includes algorithms like "Linear", "Random Forest", "LightGBM", and others.
+- **Type**: Integer
+- **Description**: This sets the seed for any random processes in the modeling, ensuring consistent and reproducible results.
+
+### `prediction_field_name`
+
+- **Type**: String
+- **Description**: Specifies the name of the field where the model's predictions will be stored in the resulting output.
+
+### `classifier`
+
+- **Type**: List of Strings
+- **Description**: A list of classifiers names that will be used for the modeling process. The names should correspond to the respective scikit-learn classifier class names.
 
 For more information please visit: [mljar-supervised docs](https://supervised.mljar.com/api/#automl-class)
-
 
 #### OpenAPI
 
 Since the service is implemented using FastAPI, we get automatic documentation of the APIs offered by the service. Visit the docs at `http://localhost:8080/docs`.
 
 ## Testing
+
 ### Running through Tox
+
 This project uses Tox for running tests. For this, you will need tox installed on your system. You can install tox using pip:
+
 ```bash
 pip install tox
 ```
+
 Once you have tox installed, you can run all tests by simply running the following command from the root of your project directory:
+
 ```bash
 tox
 ```
+
 This will run the tests as well as formatters `black` and `isort` and linter `flake8`. You can run tests corresponding to specific environment, or specific markers. Please check `tox.ini` file for configuration details.
+
 ### Running through Pytest
+
 To run tests using pytest, first create a virtual environment and install the dependencies listed in the following three files located in the `requirements` directory`:
+
 - `requirements.txt`: for main dependencies
 - `requirements_test.txt`: for test dependencies
 - `requirements_quality.txt`: for dependencies related to code quality (formatting, linting, complexity, etc.)
-Once you have the dependencies installed, you can run the tests using the following command from the root of your project directory:
+  Once you have the dependencies installed, you can run the tests using the following command from the root of your project directory:
+
 ```bash
 # Run all tests
 pytest
@@ -216,21 +219,23 @@ pytest -m <marker_name>
 ```
 
 ## Requirements
+
 The requirements files are placed in the folder `requirements`.
 Dependencies for the main model implementation in `src` are listed in the file `requirements.txt`.
 For testing, dependencies are listed in the file `requirements_test.txt`.
 Dependencies for quality-tests are listed in the file `requirements_quality.txt`. You can install these packages by running the following command from the root of your project directory:
+
 ```python
 pip install -r requirements/requirements.txt
 pip install -r requirements/requirements_test.txt
 pip install -r requirements/requirements_quality.txt
 ```
+
 Alternatively, you can let tox handle the installation of test dependencies for you for testing purposes. To do this, simply run the command `tox` from the root directory of the repository. This will create the environments, install dependencies, and run the tests as well as quality checks on the code.
 
 ## LICENSE
 
 This project is provided under the MIT License. Please see the [LICENSE](LICENSE) file for more information.
-
 
 ## Contact Information
 

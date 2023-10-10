@@ -140,8 +140,9 @@ class Classifier:
             verbose=0,
             ignore_warnings=True, 
             custom_metric=None, 
-            classifiers=[classifier for classifier in classifiers if classifier.__name__ in self.model_config["classifier"]]
-            )
+            classifiers=[classifier for classifier in classifiers if classifier.__name__ in self.model_config["classifier"]],
+            random_state=self.model_config["seed_value"]
+        )
         self.best_model: str = ''
 
     def __str__(self):
