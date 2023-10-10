@@ -168,8 +168,6 @@ This configuration file is used to specify hyperparameters and settings for the 
 - **Type**: List of Strings
 - **Description**: A list of classifiers names that will be used for the modeling process. The names should correspond to the respective scikit-learn classifier class names.
 
-For more information please visit: [mljar-supervised docs](https://supervised.mljar.com/api/#automl-class)
-
 #### OpenAPI
 
 Since the service is implemented using FastAPI, we get automatic documentation of the APIs offered by the service. Visit the docs at `http://localhost:8080/docs`.
