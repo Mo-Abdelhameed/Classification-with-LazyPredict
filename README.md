@@ -148,7 +148,6 @@ This configuration file is used to specify hyperparameters and settings for the 
 ```json
 {
   "seed_value": 123,
-  "prediction_field_name": "prediction",
   "classifier": [
     "RandomForestClassifier",
     "LogisticRegression",
@@ -163,11 +162,6 @@ This configuration file is used to specify hyperparameters and settings for the 
 
 - **Type**: Integer
 - **Description**: This sets the seed for any random processes in the modeling, ensuring consistent and reproducible results.
-
-### `prediction_field_name`
-
-- **Type**: String
-- **Description**: Specifies the name of the field where the model's predictions will be stored in the resulting output.
 
 ### `classifier`
 
