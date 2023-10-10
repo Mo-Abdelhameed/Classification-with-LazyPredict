@@ -151,7 +151,7 @@ class Classifier:
     def train(self) -> None:
         """Train the model on the provided data"""
         self.models, _ = self.predictor.fit(self.x_train, self.x_test, self.y_train, self.y_test)
-        self.best_model = self.models["F1 Score"].idxmin()
+        self.best_model = self.models["F1 Score"].idxmax()
         self._is_trained = True
 
     def predict(self, inputs: pd.DataFrame) -> np.ndarray:
