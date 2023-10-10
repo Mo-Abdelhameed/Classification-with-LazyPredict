@@ -1,0 +1,11 @@
+{
+  "seed_value": 123,
+  "prediction_field_name": "prediction",
+  "classifier": [
+      "RandomForestClassifier",
+      "LogisticRegression",
+      "GradientBoostingClassifier",
+      "AdaBoostClassifier",
+      "MLPClassifier"
+  ]
+}
